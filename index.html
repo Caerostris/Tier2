@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8' />
+		<title>UI Kit</title>
+		<link rel='stylesheet' href='css/cosmo.min.css' />
+<!--		<script type='text/javascript' src='https://bootswatch.com/bower_components/jquery/dist/jquery.min.js'></script> -->
+	</head>
+	<body>
+		<nav class='navbar navbar-default'>
+			<div class='container-fluid'>
+				<div class='navbar-header'>
+					<a class='navbar-brand' href='#'>ZeroTier</a>
+				</div>
+				<div class='collapse navbar-collapse'>
+					<ul class='nav navbar-nav navbar-right'>
+						<li>
+							<a href='/networks'>Networks</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<div class='row'>
+			<div class='col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1'>
+				<table class='table table-striped table-hover'>
+					<thead>
+						<tr>
+							<th>Network ID</th>
+							<th>Short Name</th>
+							<th>Access</th>
+							<th>Members</th>
+						</tr>
+					</thead>
+					<tbody data-bind="foreach: networks">
+						<tr>
+							<td data-bind="text: nwid"></td>
+							<td data-bind="text: name"></td>
+							<td data-bind="text: private"></td>
+							<td data-bind="text: authorizedMemberCount"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class='row'>
+			<div class='col-xs-7 col-md-offset-1 col-lg-offset-1'>
+				<input class='form-control' data-bind='value: new_name' placeholder='Short name' />
+			</div>
+			<div class='col-xs-5 col-sm-5 col-md-3 col-lg-3'>
+				<button class='btn btn-primary btn-block' data-bind='click: createNetwork'>Create Network</button>
+			</div>
+		</div>
+
+		<script type='text/javascript' src='js/knockout-3.3.0.debug.js'></script>
+		<script type='text/javascript' src='js/zerotier.js'></script>
+		<script type='text/javascript'>
+			function Network(nwid, name, private, authorizedMemberCount) {
+				this.nwid = nwid;
+				this.name = name;
+				this.private = private;
+				this.authorizedMemberCount = authorizedMemberCount;
+			}
+
+			function NetworksViewModel() {
+				var self = this;
+
+				self.networks = ko.observableArray([
+			//		new Network("342f4327c407c143", "TestNet", true, 2)
+				]);
+
+				self.new_name = ko.observable('');
+
+				self.addNetwork = function(network) {
+					self.networks.push(network);
+				}
+
+				self.createNetwork = function() {
+					zt.create_network(self.new_name(), function(err, res) {
+						if(err) {
+							alert('Could not create network: ' + res);
+							return;
+						}
+
+						self.addNetwork(new Network(res.nwid, res.name, res.private, res.authorizedMemberCount));
+					});
+
+					self.new_name('');
+				}
+			}
+
+			function update_network_list() {
+				zt.list_networks(function(err, networks) {
+					if(err) {
+						alert("Could not retrieve networks: " + networks);
+					} else {
+						for(var i = 0; i < networks.length; i++) {
+							zt.get_network(networks[i], function(err, network) {
+								if(err) {
+									alert("Could not get network info: " + network);
+								} else {
+									n = network;
+									networksViewModel.addNetwork(network);
+ 								}
+ 							});
+ 						}
+ 					}
+ 				});
+			}
+
+			zt = new ZeroTier('/api', prompt('auth token:'), function(err, status) {
+				if(err) {
+					alert("Could not connect to API: " + status);
+					return;
+				}
+
+				update_network_list();
+			});
+
+			networksViewModel = new NetworksViewModel();
+			ko.applyBindings(networksViewModel);
+		</script>
+	</body>
+</html>
