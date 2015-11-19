@@ -168,7 +168,10 @@
 											<td><input type='text' data-bind='value: view.assignedIp' /></td>
 											<td><input type='checkbox' data-bind='checked: config.authorized' /> <span>Authorized</span></td>
 											<td><input type='checkbox' data-bind='checked: config.activeBridge' /> <span>Allow</span></td>
-											<td><button class='btn btn-warning btn-sm' data-bind='click: $parent.saveMemberSettings'>Save</button>
+											<td>
+												<button class='btn btn-warning btn-sm' data-bind='click: $parent.saveMemberSettings'>Save</button>
+												<button class='btn btn-danger btn-sm' data-bind='click: $parent.deleteMember'>Delete</button>
+											</td>
 										</tr>
 									</tbody>
 								</table>
@@ -288,7 +291,7 @@
 						for(var memberId in members) {
 							zt.network_get_member(network.nwid, memberId, function(err, member) {
 								if(err) {
-									console.log('Could not retrieve member details: ' + member);
+									alert('Could not retrieve member details: ' + member);
 									return;
 								}
 
@@ -312,6 +315,23 @@
 							});
 						}
 					});
+
+					/**
+					 * Delete a given member
+					 **/
+					networkViewModel.deleteMember = function(member) {
+						var confirmation = confirm('Delete member?');
+						if(confirmation) {
+							zt.network_delete_member(member.config, function(err, res) {
+								if(err) {
+									alert('Could not delete member:' + res);
+									return;
+								}
+
+								networkViewModel.members.remove(member);
+							});
+						}
+					};
 					
 					/**
 					 * Delete a given network
@@ -403,7 +423,7 @@
 						
 						zt.update_network(network, function(err, res) {
 							if(err) {
-								consle.log("Could not save network details");
+								alert("Could not save network details");
 							}
 						});
 					};

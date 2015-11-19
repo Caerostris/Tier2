@@ -18,7 +18,7 @@ var ZeroTier = function(base_url, auth_secret, callback) {
 							// avoid exception for empty JSON response (returned for delete operations)
 							response = '{}';
 						}
-						console.log(response);
+
 						var res = JSON.parse(response);
 						callback(false, res);
 					} catch(e) {
@@ -89,4 +89,8 @@ ZeroTier.prototype.network_get_member = function(nwid, address, callback) {
 
 ZeroTier.prototype.network_update_member = function(member, callback) {
 	this._post('/controller/network/' + member.nwid + '/member/' + member.address, member, callback);
+}
+
+ZeroTier.prototype.network_delete_member = function(member, callback) {
+	this._delete('/controller/network/' + member.nwid + '/member/' + member.address, callback);
 }
