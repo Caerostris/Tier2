@@ -13,7 +13,13 @@ var ZeroTier = function(base_url, auth_secret, callback) {
 					callback(true, xhr.status);
 				} else {
 					try {
-						var res = JSON.parse(xhr.response);
+						var response = xhr.response;
+						if(response == '') {
+							// avoid exception for empty JSON response (returned for delete operations)
+							response = '{}';
+						}
+						console.log(response);
+						var res = JSON.parse(response);
 						callback(false, res);
 					} catch(e) {
 						callback(true, e.toString());
@@ -66,7 +72,7 @@ ZeroTier.prototype.get_network = function(nwid, callback) {
 };
 
 ZeroTier.prototype.update_network = function(network, callback) {
-	this._post('/controller/network/' + network.nwid, callback);
+	this._post('/controller/network/' + network.nwid, network, callback);
 };
 
 ZeroTier.prototype.delete_network = function(nwid, callback) {

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8' />
+		<title>ZeroTier</title>
+		<link rel='stylesheet' href='css/cosmo.min.css' />
+	</head>
+	<body>
+		<nav class='navbar navbar-default'>
+			<div class='container-fluid'>
+				<div class='navbar-header'>
+					<a class='navbar-brand' href='/'>ZeroTier</a>
+				</div>
+				<div class='collapse navbar-collapse'>
+					<ul class='nav navbar-nav navbar-right'>
+						<li>
+							<a href='/'>Networks</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<div class='container-fluid'>
+			<div class='row'>
+				<div class='col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1'>
+					<div class='panel panel-default'>
+						<div class='panel-heading'>
+							<h4 class='panel-title'>Configuration</h4>
+						</div>
+						<div class='panel-collpase collapse in'>
+							<div class='panel-body'>
+								<div class='form-group'>
+									<label class='col-sm-2 control-label'>Short Name</label>
+									<div class='col-sm-10'>
+										<input class='form-control' data-bind='value: config.name'/>
+									</div>
+								</div>
+								<div class='form-group'>
+									<label class='col-sm-2 control-label'>Access Control</label>
+									<div class='col-sm-10'>
+										<div class='checkbox'>
+											<label>
+												<input type='checkbox' data-bind='checked: config.private' />
+												<span>Private (Access Control Enabled)</span>
+											</label>
+										</div>
+									</div>
+									<div class='form-group'>
+										<label class='col-sm-2 control-label'>IPv4</label>
+										<div class='col-sm-10'>
+											<select class='form-control' data-bind="options: view.availablev4AssignModes, optionsText: 'name', value: view.chosenv4AssignMode"></select>
+										</div>
+									</div>
+									<div data-bind="if: view.chosenv4AssignMode().id == 'zt'" class='form-group'>
+										<label class='col-sm-2 control-label'></label>
+										<div class='col-sm-10'>
+											<div class='panel panel-default'>
+												<div class='panel-body'>
+													<div class='panel panel-default'>
+														<div class='panel-heading'>
+															<h4 class='panel-title'>Local routes</h4>
+														</div>
+														<div class='panel-body'>
+															<span>Route</span>
+															<input data-bind='value: view.localRoute'>
+														</div>
+													</div>
+													<div class='panel panel-default'>
+														<div class='panel-heading'>
+															<h4 class='panel-title'>IP Auto-Assign Ranges</h4>
+														</div>
+														<div class='panel-body'>
+															<span>Range from</span>
+															<input data-bind='value: view.ipRangeStart'>
+															<span> to </span>
+															<input data-bind='value: view.ipRangeEnd'>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class='form-group'>
+										<label class='col-sm-2 control-label'>IPv6</label>
+										<div class='col-sm-10'>
+											<select class='form-control' data-bind="options: view.availablev6AssignModes, optionsText: 'name', value: view.chosenv6AssignMode"></select>
+										</div>
+									</div>
+									<div class='form-group'>
+										<label class='col-sm-2 control-panel'>Rules</label>
+										<div class='col-sm-10'>
+											<div class='panel panel-default'>
+												<div class='panel-body'>
+													<div class='checkbox'>
+														<label>
+															<input type='checkbox' data-bind='checked: view.rules.all' />
+															<span>Allow All Protocols</span>
+														</label>
+													</div>
+													<div class='checkbox'>
+														<label>
+															<input type='checkbox' data-bind='checked: view.rules.ipv4, disable: view.rules.all' />
+															<span>IPv4 (and ARP)</span>
+														</label>
+													</div>
+													<div class='checkbox'>
+														<label>
+															<input type='checkbox' data-bind='checked: view.rules.ipv6, disable: view.rules.all' />
+															<span>IPv6</span>
+														</label>
+													</div>
+													<div class='checkbox'>
+														<label>
+															<input type='checkbox' data-bind='checked: view.rules.ipx, disable: view.rules.all' />
+															<span>IPX (Novell)</span>
+														</label>
+													</div>
+													<div class='checkbox'>
+														<label>
+															<input type='checkbox' data-bind='checked: view.rules.aoe, disable: view.rules.all' />
+															<span>AoE (ATA over Ethernet)</span>
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class='form-group'>
+										<label class='col-sm-2 control-label'>Multicast Limit</label>
+										<div class='col-sm-10'>
+											<input class='form-control' data-bind='value: config.multicastLimit'>
+										</div>
+										<div class='col-sm-10 col-sm-offset-2'>
+											<div class='checkbox'>
+												<label>
+													<input type='checkbox' data-bind='checked: config.enableBroadcast'/>
+													<span>Enable Broadcast (ff:ff:ff:ff)</span>
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class='panel panel-default'>
+						<div class='panel-heading'>
+							<h4 class='panel-title'>Members</h4>
+						</div>
+						<div class='panel-collapse collapse in'>
+							<div class='panel-body'>
+								<table class='table'>
+									<thead>
+										<tr>
+											<th>Member ID</th>
+											<th>Last real IP/Port</th>
+											<th>Assigned IP</th>
+											<th>Access</th>
+											<th>Bridge</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody data-bind="foreach: members">
+										<tr>
+											<td><b data-bind="text: config.address"></b></td>
+											<td data-bind='text: view.lastIp'></td>
+											<td><input type='text' data-bind='value: view.assignedIp' /></td>
+											<td><input type='checkbox' data-bind='checked: config.authorized' /> <span>Authorized</span></td>
+											<td><input type='checkbox' data-bind='checked: config.activeBridge' /> <span>Allow</span></td>
+											<td><button class='btn btn-warning btn-sm' data-bind='click: $parent.saveMemberSettings'>Save</button>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<hr />
+			<div>
+				<span>
+					<button class='btn btn-primary' data-bind='click: saveNetworkSettings'>Save</button>
+				</span>
+				<span style='float: right'>
+					<button class='btn btn-danger' data-bind='click: deleteNetwork'>Delete</button>
+				</span>
+			</div>
+		</div>
+		</div>
+		
+		<script type='text/javascript' src='js/knockout-3.3.0.debug.js'></script>
+		<script type='text/javascript' src='js/zerotier.js'></script>
+		<script type='text/javascript'>
+			assignModes = {
+				'zt': { id: 'zt', name: 'ZeroTier managed' },
+				'none': { id: 'none', name: 'Unmanaged' },
+				'dhcp': { id: 'dhcp', name: 'DHCP' }
+			};
+
+			function get_network_details() {
+				var hash = window.location.hash
+				var nwid = hash.substr(1, hash.length);
+				zt.get_network(nwid, function(err, network) {
+					if(err) {
+						alert("Could not retrieve network details: " + network);
+						return;
+					}
+					
+					networkViewModel = {
+						view: {
+							availablev4AssignModes: ko.observableArray([
+								assignModes['none'],
+								assignModes['zt'],
+								assignModes['dhcp']
+							]),
+							availablev6AssignModes: ko.observableArray([
+								assignModes['none'],
+								assignModes['zt']
+							])
+						},
+						network: network,
+						members: ko.observableArray()
+					};
+				
+					networkViewModel.config = {};
+					for(var key in network) {
+						networkViewModel.config[key] = ko.observable(network[key]);
+					}
+				
+					networkViewModel.view.chosenv4AssignMode = ko.observable(assignModes[network.v4AssignMode]);
+					networkViewModel.view.chosenv6AssignMode = ko.observable(assignModes[network.v6AssignMode]);
+					
+					var ipRangeStart = '';
+					var ipRangeEnd = '';
+					var localRoute = '';
+					
+					if(network.ipAssignmentPools.length > 0) {
+						ipRangeStart = network.ipAssignmentPools[0].ipRangeStart;
+						ipRangeEnd = network.ipAssignmentPools[0].ipRangeEnd;
+					}
+					
+					if(network.ipLocalRoutes.length > 0) {
+						localRoute = network.ipLocalRoutes[0];
+					}
+					
+					networkViewModel.view.ipRangeStart = ko.observable(ipRangeStart);
+					networkViewModel.view.ipRangeEnd = ko.observable(ipRangeEnd);
+					networkViewModel.view.localRoute = ko.observable(localRoute);
+					
+					networkViewModel.view.rules = {
+						all: ko.observable(false),
+						ipv4: ko.observable(false),
+						ipv6: ko.observable(false),
+						ipx: ko.observable(false),
+						aoe: ko.observable(false)
+					};
+					for(var i = 0; i < network.rules.length; i++) {
+						var accept = (network.rules[i].action == 'accept');
+						if(typeof network.rules[i].etherType == 'undefined') {
+							networkViewModel.view.rules.all(accept);
+						} else {
+							switch(network.rules[i].etherType) {
+								case 0x0806: // arp
+								case 0x0800: // ipv4
+									networkViewModel.view.rules.ipv4(accept);
+									break;
+								case 0x08137: // ipx
+								case 0x08138: // ipx
+									networkViewModel.view.rules.ipx(accept);
+									break;
+								case 0x86DD: // ipv6
+									networkViewModel.view.rules.ipv6(accept);
+									break;
+								case 0x88A2: // AoE
+									networkViewModel.view.rules.aoe(accept);
+									break;
+							}
+						}
+					}
+					
+					zt.network_list_members(network.nwid, function(err, members) {
+						if(err) {
+							alert('Could not list members: ' + members);
+							return;
+						}
+
+						for(var memberId in members) {
+							zt.network_get_member(network.nwid, memberId, function(err, member) {
+								if(err) {
+									console.log('Could not retrieve member details: ' + member);
+									return;
+								}
+
+								memberModel = {
+									config: member,
+									view: {}
+								};
+								
+								if(member.recentLog.length > 0) {
+									memberModel.view.lastIp = member.recentLog[0].fromAddr;
+								} else {
+									memberModel.view.lastIp = '';
+								}
+									
+								if(member.ipAssignments.length > 0) {
+									memberModel.view.assignedIp = member.ipAssignments[0];
+								} else {
+									memberModel.view.assignedIp = '';
+								}
+								networkViewModel.members.push(memberModel);
+							});
+						}
+					});
+					
+					/**
+					 * Delete a given network
+					 **/
+					networkViewModel.deleteNetwork = function() {
+						var confirmation = confirm('Delete network?');
+						if(confirmation) {
+							zt.delete_network(network.nwid, function(err, res) {
+								if(err) {
+									alert('Could not delete network:' + res);
+									return;
+								}
+
+								window.location = '/';
+							});
+						}
+					};
+
+					/**
+					 * Save all settings specific to a single user
+					 **/
+					networkViewModel.saveMemberSettings = function(member) {
+						// update member via API
+						zt.network_update_member(member.config, function(err, res) {
+							if(err) {
+								alert('Could not save member settings: ' + res);
+							}
+						});
+					};
+					
+					/**
+					 * Save all settings regarding the network, except for user specific settings
+					 **/
+					networkViewModel.saveNetworkSettings = function() {
+						// udpdate the network object retrieved form the API
+						network.name = networkViewModel.config.name();
+						network.private = networkViewModel.config.private();
+						network.v4AssignMode = networkViewModel.view.chosenv4AssignMode().id;
+						network.v6AssignMode = networkViewModel.view.chosenv6AssignMode().id;
+						network.multicastLimit = networkViewModel.config.multicastLimit();
+						network.enableBroadcast = networkViewModel.config.enableBroadcast();
+						
+						var rules = [
+							{ // all
+								action: networkViewModel.view.rules.all() ? 'accept' : 'drop',
+								ruleNo: 1
+							},
+							{ // ipv4
+								action: networkViewModel.view.rules.ipv4() ? 'accept' : 'drop',
+								ruleNo: 20,
+								etherType: 0x0800
+							},
+							{ // arp if ipv4
+								action: networkViewModel.view.rules.ipv4() ? 'accept' : 'drop',
+								ruleNo: 21,
+								etherType: 0x0806
+							},
+							{ // ipv6
+								action: networkViewModel.view.rules.ipv6() ? 'accept' : 'drop',
+								ruleNo: 30,
+								etherType: 0x86DD
+							},
+							{ // ipx
+								action: networkViewModel.view.rules.ipx() ? 'accept' : 'drop',
+								ruleNo: 40,
+								etherType: 0x08137
+							},
+							{ // ipx
+								action: networkViewModel.view.rules.ipx() ? 'accept' : 'drop',
+								ruleNo: 41,
+								etherType: 0x08138
+							},
+							{ // AoE
+								action: networkViewModel.view.rules.aoe() ? 'accept' : 'drop',
+								ruleNo: 50,
+								etherType: 0x88A2
+							}
+						];
+						
+						network.rules = rules;
+						
+						if(network.v4AssignMode == 'zt') {
+							network.ipAssignmentPools[0] = {
+								ipRangeStart: networkViewModel.view.ipRangeStart(),
+								ipRangeEnd: networkViewModel.view.ipRangeEnd()
+							};
+							network.ipLocalRoutes[0] = networkViewModel.view.localRoute();
+						}
+						
+						zt.update_network(network, function(err, res) {
+							if(err) {
+								consle.log("Could not save network details");
+							}
+						});
+					};
+					
+					// apply the view to the document
+					ko.applyBindings(networkViewModel);
+				});
+			}
+
+			// connect to the ZeroTier API
+			zt = new ZeroTier('/api', window.localStorage.auth_secret, function(err, status) {
+				if(err) {
+					alert("Could not connect to API: " + status);
+					return;
+				}
+
+				get_network_details();
+			});
+		</script>
+	</body>
+</html>

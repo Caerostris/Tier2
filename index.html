@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset='utf-8' />
-		<title>UI Kit</title>
+		<title>ZeroTier</title>
 		<link rel='stylesheet' href='css/cosmo.min.css' />
 <!--		<script type='text/javascript' src='https://bootswatch.com/bower_components/jquery/dist/jquery.min.js'></script> -->
 	</head>
@@ -10,12 +10,12 @@
 		<nav class='navbar navbar-default'>
 			<div class='container-fluid'>
 				<div class='navbar-header'>
-					<a class='navbar-brand' href='#'>ZeroTier</a>
+					<a class='navbar-brand' href='/'>ZeroTier</a>
 				</div>
 				<div class='collapse navbar-collapse'>
 					<ul class='nav navbar-nav navbar-right'>
 						<li>
-							<a href='/networks'>Networks</a>
+							<a href='/'>Networks</a>
 						</li>
 					</ul>
 				</div>
@@ -35,7 +35,7 @@
 					</thead>
 					<tbody data-bind="foreach: networks">
 						<tr>
-							<td data-bind="text: nwid"></td>
+							<td><a data-bind="attr: { href: 'network.html#' + nwid }, text: nwid"></a></td>
 							<td data-bind="text: name"></td>
 							<td data-bind="text: private"></td>
 							<td data-bind="text: authorizedMemberCount"></td>
@@ -95,22 +95,23 @@
 				zt.list_networks(function(err, networks) {
 					if(err) {
 						alert("Could not retrieve networks: " + networks);
-					} else {
-						for(var i = 0; i < networks.length; i++) {
-							zt.get_network(networks[i], function(err, network) {
-								if(err) {
-									alert("Could not get network info: " + network);
-								} else {
-									n = network;
-									networksViewModel.addNetwork(network);
- 								}
- 							});
- 						}
- 					}
+						return;
+					}
+					
+					for(var i = 0; i < networks.length; i++) {
+						zt.get_network(networks[i], function(err, network) {
+							if(err) {
+								alert("Could not get network info: " + network);
+								return;
+							}
+
+							networksViewModel.addNetwork(network);
+ 						});
+					}
  				});
 			}
 
-			zt = new ZeroTier('/api', prompt('auth token:'), function(err, status) {
+			zt = new ZeroTier('/api', window.localStorage.auth_secret, function(err, status) {
 				if(err) {
 					alert("Could not connect to API: " + status);
 					return;
