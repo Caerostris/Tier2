@@ -1,0 +1,35 @@
+server {
+	listen 80 default_server;
+	listen 443 ssl spdy default;
+
+	# CHANGEME
+	server_name your.site;
+
+	# redirect all HTTP requests to HTTPS
+	if ($ssl_protocol = "") {
+		rewrite ^ https://$server_name$request_uri? permanent;
+	}
+
+	# CHANGEME
+	# HTTPS certificates
+	ssl_certificate /etc/ssl/your.site.chain.crt;
+	ssl_certificate_key /etc/ssl/your.site.key;
+
+	# I like to have HSTS on. You should, too
+	#add_header Strict-Transport-Security "max-age=31536000; includeSubdomains; preload";
+
+	root /var/www/html;
+
+	index index.html;
+
+	location / {
+		# try serving requested file or just serve the index page
+		try_files $uri $uri/ /index.html;
+	}
+
+	# proxy all API requests through to ZeroTier
+	location /api {
+		rewrite ^/api/(.*)$ /$1 break;
+		proxy_pass http://127.0.0.1:9993;
+	}
+}
