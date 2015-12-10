@@ -1,4 +1,4 @@
-# Tier2
+# Tier 2
 
 A simple HTML5/JS admin interface for ZeroTier root nodes.  
 It's kind of the open source, stripped down version of [https://my.zerotier.net](https://my.zerotier.net) for anyone wanting to run their own root servers / root topology / world / whatever funky term they'll come up with on the next release.
@@ -20,7 +20,7 @@ The setup is fairly straightforward.
 
 For now, you'll have to "log in" manually:
   
-* Open a browser, go to your Tier2 panel
+* Open a browser, go to your Tier 2 panel
 * Open the dev tools
 * Copy your auth secret in `/var/lib/zerotier-one/authtoken.secret` on the server
 * Paste `window.localStorage.auth_secret = "auth_secret"` (and replace auth_secret with the secret you just copied) into the JavaScript console
