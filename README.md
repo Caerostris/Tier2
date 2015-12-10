@@ -25,6 +25,10 @@ For now, you'll have to "log in" manually:
 * Copy your auth secret in `/var/lib/zerotier-one/authtoken.secret` on the server
 * Paste `window.localStorage.auth_secret = "auth_secret"` (and replace auth_secret with the secret you just copied) into the JavaScript console
 
+### Screenshots
+
+Have a look at `docs/screenshots`
+
 ### FAQ
 
 * But why do I need an HTTPS certificate?
