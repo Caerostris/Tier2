@@ -5,7 +5,7 @@ It's kind of the open source, stripped down version of [https://my.zerotier.net]
 
 ### Requirements
 
-* ZeroTier (Duh!)
+* ZeroTier **with Network Controller support** (read below!)
 * Nginx
 * HTTPS certificate for Nginx
 
@@ -28,6 +28,21 @@ For now, you'll have to "log in" manually:
 ### Screenshots
 
 Have a look at `docs/screenshots`
+
+### ZeroTier Network Controller Support
+
+The standard distribution of ZeroTier cannot function as a Network Controller.  
+Thus, Tier2 is not going to work with it. It will give 404 errors.  
+In order to enable Network Controller Support, you need to download & compile ZeroTier from source with the `ZT_ENABLE_NETWORK_CONTROLLER` option set to `1`.  
+This can be done as follows:  
+
+    git clone https://github.com/zerotier/ZeroTierOne.git
+    cd ZeroTierOne
+    make ZT_ENABLE_NETWORK_CONTROLLER
+    make installer # on linux
+    make mac-dist-pkg # on mac
+
+Now install the generated binary or package.
 
 ### FAQ
 
