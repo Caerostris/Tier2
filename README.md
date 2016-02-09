@@ -5,16 +5,16 @@ It's kind of the open source, stripped down version of [https://my.zerotier.net]
 
 ### Requirements
 
-* ZeroTier **with Network Controller support** (read below!)
-* Nginx
-* HTTPS certificate for Nginx
+* ZeroTierOne **with Network Controller support** (read below!)
+* Nginx / Apache
+* HTTPS certificate
 
 
 ### Setup
 
 The setup is fairly straightforward.  
 
-1. Install & update Nginx configuration from `nginx/`
+1. Install & update Nginx or Apache configuration from `config/`
 2. Move everything in `html/` into your web root (`/var/www/html` by default)
 3. Yay!
 
@@ -53,13 +53,12 @@ Now install the generated binary or package.
 * Thanks for doing this!
     * Don't worry, I'm just procrastinating. I should be revising.
 * I already have Nginx running. Can I run this from a sub-directory?
-   * Should work, even though I haven't tested it. You'll have to integrate the config file in `nginx/` into your current config
-* How about Apache configs?
-   * You can generate the apache configs using the following commands:
-   * `sudo apt-get remove apache2 && sudo apt-get install nginx`
+   * Should work, even though I haven't tested it. You'll have to integrate the config files in `config/` into your current config
 * I don't like the theme. Can I change it?
     1. You should like it, because it looks cool
     2. Yep, just find a better bootstrap theme (good luck!), place it in the `css/` folder and replace the theme in `index.html` and `network.html`. You should also update `css/zt_network.css`.
+* How about Apache?
+    1. @mcondarelli has provided Apache configs. I added TLS directives but I have not personally tested the modified configuration file. It's not my fault if that config formats your hard drive. You have been warned.
 
 ### TODO
 
