@@ -1,14 +1,14 @@
 # Tier 2
 
 A simple HTML5/JS admin interface for ZeroTier root nodes.  
-It's kind of the open source, stripped down version of [https://my.zerotier.net](https://my.zerotier.net) for anyone wanting to run their own root servers / root topology / world / whatever funky term they'll come up with on the next release.
+It's kind of the open source, stripped down version of [https://my.zerotier.net](https://my.zerotier.net) for anyone wanting to run their own root servers / root topology / world / whatever funky term they'll come up with on the next release.  
+Please note this is still in pretty early stages. It's more user friendly than bare CURL. Slightly.
 
 ### Requirements
 
 * ZeroTierOne **with Network Controller support** (read below!)
 * Nginx / Apache
 * HTTPS certificate
-
 
 ### Setup
 
@@ -17,13 +17,6 @@ The setup is fairly straightforward.
 1. Install & update Nginx or Apache configuration from `config/`
 2. Move everything in `html/` into your web root (`/var/www/html` by default)
 3. Yay!
-
-For now, you'll have to "log in" manually:
-  
-* Open a browser, go to your Tier 2 panel
-* Open the dev tools
-* Copy your auth secret in `/var/lib/zerotier-one/authtoken.secret` on the server
-* Paste `window.localStorage.auth_secret = "auth_secret"` (and replace auth_secret with the secret you just copied) into the JavaScript console
 
 ### Screenshots
 
@@ -62,10 +55,10 @@ Now install the generated binary or package.
 
 ### TODO
 
-* Proper login
 * Show loading indicators while loading stuff (opening pages and saving settings)
-* Proper proper login with user/password
+* Proper login with user/password
 * Refactor JavaScript view code to be less crappy
+* Error handling
 
 ### License
 

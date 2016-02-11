@@ -58,7 +58,8 @@ function update_network_list() {
 
 zt = new ZeroTier('api', window.localStorage.auth_secret, function(err, status) {
 	if(err) {
-		alert("Could not connect to API: " + status);
+		// redirect to login page
+		window.location.href = "login.html";
 		return;
 	}
 

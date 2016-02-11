@@ -255,7 +255,8 @@ function get_network_details() {
 // connect to the ZeroTier API
 zt = new ZeroTier('api', window.localStorage.auth_secret, function(err, status) {
 	if(err) {
-		alert("Could not connect to API: " + status);
+		// redirect to login page
+		window.location.href = "login.html";
 		return;
 	}
 
